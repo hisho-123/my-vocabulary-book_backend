@@ -29,14 +29,14 @@ func NewRouter() *gin.Engine {
 		// ログイン
 		api.POST("/login", controller.LoginHandler)
 		// ユーザー削除
-		api.POST("/user-delete", controller.DeleteUserHandler)
+		api.DELETE("/user-delete", controller.DeleteUserHandler)
 		// 単語帳作成・取得
 		api.POST("/book", controller.CreateHandler)
 		api.GET("/book", controller.GetBookHandler)
 		// 単語帳名取得
 		api.GET("/book-list", controller.GetBookListHandler)
 		// 単語帳削除
-		api.POST("/book-delete", controller.DeleteBookHandler)
+		api.DELETE("/book-delete", controller.DeleteBookHandler)
 	}
 
 	return router
