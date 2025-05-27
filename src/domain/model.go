@@ -14,6 +14,7 @@ type Book struct {
 }
 
 type Word struct {
+	Id				 int		`json:"wordId"`
 	Word       string `json:"word"`
 	Translated string `json:"translated"`
 }
