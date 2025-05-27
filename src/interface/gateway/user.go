@@ -3,11 +3,8 @@ package gateway
 import (
 	"backend/src/domain"
 	"backend/src/infra/db"
-	"errors"
 	"fmt"
 	"log"
-
-	"github.com/go-sql-driver/mysql"
 )
 
 // user作成
@@ -25,13 +22,6 @@ func CreateUser(user domain.UserInput) (userId int, err error) {
 
 	_, err = db.Exec(queryCreateUser, user.UserName, user.Password)
 	if err != nil {
-		var mysqlErr *mysql.MySQLError
-		errors.As(err, &mysqlErr)
-		if mysqlErr.Number == 1062 {
-			log.Println("error: ", err)
-			return 0, fmt.Errorf(domain.Conflict)
-		}
-
 		log.Println("error: ", err)
 		return 0, fmt.Errorf(domain.InternalServerError)
 	}
