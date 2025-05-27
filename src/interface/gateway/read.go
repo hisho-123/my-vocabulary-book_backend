@@ -70,7 +70,7 @@ func GetBookByBookId(bookId int) (book *domain.GetBookOutput, err error) {
 	}
 
 	// 単語取得
-	queryRowWords := "select word, translated_word from words where book_id = ?"
+	queryRowWords := "select word_id, word, translated_word from words where book_id = ?"
 	wordsRows, err := db.Query(queryRowWords, bookId)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -81,16 +81,18 @@ func GetBookByBookId(bookId int) (book *domain.GetBookOutput, err error) {
 		return nil, fmt.Errorf(domain.InternalServerError)
 	}
 
+	var wordId int
 	var word string
 	var translated string
 
 	for wordsRows.Next() {
-		if err := wordsRows.Scan(&word, &translated); err != nil {
+		if err := wordsRows.Scan(&wordId, &word, &translated); err != nil {
 			log.Println("error: ", err)
 			return nil, fmt.Errorf(domain.InternalServerError)
 		}
 
 		book.Words = append(book.Words, domain.Word{
+			Id:         wordId,
 			Word:       word,
 			Translated: translated,
 		})
