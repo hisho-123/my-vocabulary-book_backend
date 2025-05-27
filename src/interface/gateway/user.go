@@ -12,6 +12,12 @@ import (
 
 // user作成
 func CreateUser(user domain.UserInput) (userId int, err error) {
+	_, _, err = GetUser(user.UserName)
+	if err == nil {
+		log.Printf("error: User name %s already exist.", user.UserName)
+		return 0, fmt.Errorf(domain.Conflict)
+	}
+
 	db := db.OpenDB()
 	defer db.Close()
 
