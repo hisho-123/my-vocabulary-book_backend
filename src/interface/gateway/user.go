@@ -3,6 +3,8 @@ package gateway
 import (
 	"backend/src/domain"
 	"backend/src/infra/db"
+	"database/sql"
+	"errors"
 	"fmt"
 	"log"
 )
@@ -45,6 +47,11 @@ func GetUser(userName string) (userId int, hashedPassword string, err error) {
 
 	if err := userRows.Scan(&userId, &hashedPassword); err != nil {
 		log.Println("error: ", err)
+
+		if errors.Is(err, sql.ErrNoRows) {
+			return 0, "", fmt.Errorf(domain.NotFound)
+		}
+
 		return 0, "", fmt.Errorf(domain.InternalServerError)
 	}
 
