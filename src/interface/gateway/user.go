@@ -3,15 +3,26 @@ package gateway
 import (
 	"backend/src/domain"
 	"backend/src/infra/db"
+	"database/sql"
 	"errors"
 	"fmt"
 	"log"
-
-	"github.com/go-sql-driver/mysql"
 )
 
 // user作成
 func CreateUser(user domain.UserInput) (userId int, err error) {
+	const MAX_USER_NAME int = 50
+	if len(user.UserName) > MAX_USER_NAME {
+		log.Printf("error: User name too long.")
+		return 0, fmt.Errorf(domain.BadRequest)
+	}
+
+	_, _, err = GetUser(user.UserName)
+	if err == nil {
+		log.Printf("error: User name %s already exist.", user.UserName)
+		return 0, fmt.Errorf(domain.Conflict)
+	}
+
 	db := db.OpenDB()
 	defer db.Close()
 
@@ -19,13 +30,6 @@ func CreateUser(user domain.UserInput) (userId int, err error) {
 
 	_, err = db.Exec(queryCreateUser, user.UserName, user.Password)
 	if err != nil {
-		var mysqlErr *mysql.MySQLError
-		errors.As(err, &mysqlErr)
-		if mysqlErr.Number == 1062 {
-			log.Println("error: ", err)
-			return 0, fmt.Errorf(domain.Conflict)
-		}
-
 		log.Println("error: ", err)
 		return 0, fmt.Errorf(domain.InternalServerError)
 	}
@@ -49,6 +53,11 @@ func GetUser(userName string) (userId int, hashedPassword string, err error) {
 
 	if err := userRows.Scan(&userId, &hashedPassword); err != nil {
 		log.Println("error: ", err)
+
+		if errors.Is(err, sql.ErrNoRows) {
+			return 0, "", fmt.Errorf(domain.NotFound)
+		}
+
 		return 0, "", fmt.Errorf(domain.InternalServerError)
 	}
 
@@ -72,7 +81,7 @@ func DeleteUserByUserId(userId int) error {
 	}
 	if rowsAffected == 0 {
 		log.Printf("no user found with user_id %d", userId)
-		return fmt.Errorf(domain.InternalServerError)
+		return fmt.Errorf(domain.BadRequest)
 	}
 
 	return nil
