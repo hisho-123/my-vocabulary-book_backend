@@ -11,6 +11,12 @@ import (
 
 // user作成
 func CreateUser(user domain.UserInput) (userId int, err error) {
+	const MAX_USER_NAME int = 50
+	if len(user.UserName) > MAX_USER_NAME {
+		log.Printf("error: User name too long.")
+		return 0, fmt.Errorf(domain.BadRequest)
+	}
+
 	_, _, err = GetUser(user.UserName)
 	if err == nil {
 		log.Printf("error: User name %s already exist.", user.UserName)

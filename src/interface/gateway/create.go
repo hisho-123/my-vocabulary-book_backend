@@ -6,10 +6,18 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+
+	"github.com/go-sql-driver/mysql"
 )
 
 // 単語帳の作成
 func CreateBookByUserId(book domain.CreateBookInput) error {
+	const MAX_BOOK_NAME int = 20
+	if len(book.BookName) > MAX_BOOK_NAME {
+		log.Printf("error: Book name too long.")
+		return fmt.Errorf(domain.BadRequest)
+	}
+
 	db := db.OpenDB()
 	defer db.Close()
 
@@ -33,6 +41,16 @@ func CreateBookByUserId(book domain.CreateBookInput) error {
 	for _, v := range book.Words {
 		_, err := db.Query(queryCreateWord, bookId, v.Word, v.Translated)
 		if err != nil {
+			if mysqlErr, ok := err.(*mysql.MySQLError); ok {
+				if mysqlErr.Number == 1406 {
+					log.Println("error: ", err)
+					return fmt.Errorf(domain.BadRequest)
+				}
+
+				log.Println("error: ", err)
+				return fmt.Errorf(domain.InternalServerError)
+			}
+
 			queryDeleteWords := "delete from words where book_id = ?;"
 			db.Query(queryDeleteWords, bookId)
 
