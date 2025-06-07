@@ -9,6 +9,17 @@
 
 ## ローカル環境の構築方法
 
+### プロジェクトのクローン
+- gitのインストール
+```
+sudo apt update & apt install git
+```
+
+- クローン
+```
+sudo git clone git@github.com:hisho-123/my-vocabulary-book_frontend.git
+```
+
 ### goのインストール
 
 - 依存パッケージのインストール
