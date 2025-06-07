@@ -7,6 +7,39 @@
   - ただ、アプリ自体が単純な構成なので、いい感じに省略する。
 
 
+## ローカル環境の構築方法
+
+### goのインストール
+
+- 依存パッケージのインストール
+```
+sudo apt update & apt install curl tar
+```
+
+- goのインストール
+```
+curl -OL https://go.dev/dl/go1.22.3.linux-amd64.tar.gz
+sudo tar -C /usr/local -xzf go1.22.3.linux-amd64.tar.gz
+```
+
+- パスを通す
+  - ~/.bashrc or ~/.zshrc に下記を追記
+```
+export PATH="$HOME/go/bin:$PATH"
+```
+
+- ~/.bashrc を再読み込み
+```
+source ~/.bashrc
+```
+
+### 確認
+```
+$ go version
+go version go1.23.4 linux/amd64
+```
+
+
 ## 構成
 
 ### コアドメイン
