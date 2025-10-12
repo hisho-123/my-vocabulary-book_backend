@@ -148,3 +148,58 @@ erDiagram
   - mysql外に出る : exit
 
 - dockerに入ると同時にmysqlへ : docker exec -it db mysql -uroot -proot
+
+## deploy
+
+### build
+リポジトリのルートにて実施
+
+- リポジトリ移動
+```
+cd src/
+```
+
+- モージュールを管理
+```
+go mod tidy
+```
+
+- ビルドを実行
+```
+go build -o ../bin/backend
+```
+
+- バイナリファイルの確認
+```
+ls -l ../bin/backend
+```
+
+- 起動確認
+```
+./bin/backend
+```
+```
+curl http://localhost:8080
+# 404が返ってくること
+```
+
+### 起動
+
+- [単語帳アプリ](https://my-vocabulary-book.hisho-123.com/) にデプロイした手順を記載
+  リポジトリのルートにて実施
+```
+# サーバーへバイナリファイルをアップロード
+scp bin/backend {{server名}}:.
+# サーバーに接続
+ssh {{server名}}
+```
+
+サーバー上での作業
+```
+# ログファイルの作成
+mkdir -p /var/log/app/
+touch /var/log/app/my-vocabulary-book.log
+
+# バックグラウンドで起動、アプリログをログファイルに出力する。
+nohup ./my-vocabulary-book/backend > /var/log/app/my-vocabulary-book.log 2>&1 &
+```
