@@ -19,7 +19,7 @@ func DeleteBook(requestHeader string, input domain.BookInput) error {
 	}
 	if book.UserId != claims.UserId {
 		log.Printf("error: UserId in token did not match the one in the bookId: %v.", input.BookId)
-		return fmt.Errorf(domain.Unauthorized)
+		return fmt.Errorf(domain.Forbidden)
 	}
 
 	err = gateway.DeleteBookByBookId(input.BookId)

@@ -11,7 +11,7 @@ import (
 func DeleteBookHandler(c *gin.Context) {
 	requestHeader := c.GetHeader("Token")
 	if requestHeader == "" {
-		c.JSON(http.StatusUnauthorized, gin.H{
+		c.JSON(http.StatusForbidden, gin.H{
 			"error": "Invalid Json header.",
 		})
 		return

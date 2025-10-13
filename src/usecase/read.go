@@ -41,7 +41,7 @@ func GetBook(requestHeader string, bookId int) (book *domain.GetBookOutput, err 
 
 	if book.UserId != claims.UserId {
 		log.Printf("error: UserId in token did not match the one in the bookName: %v.", book.BookName)
-		return nil, fmt.Errorf(domain.Unauthorized)
+		return nil, fmt.Errorf(domain.Forbidden)
 	}
 
 	return book, nil
