@@ -17,6 +17,20 @@ func RegisterHandler(c *gin.Context) {
 		return
 	}
 
+	if requestBody.UserName == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "User name is required.",
+		})
+		return
+	}
+
+	if requestBody.Password == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Password is required.",
+		})
+		return
+	}
+
 	output, err := usecase.CreateUser(requestBody)
 	if err != nil {
 		c.JSON(statusCode(err), gin.H{
