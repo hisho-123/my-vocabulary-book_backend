@@ -42,7 +42,7 @@ func GetBookHandler(c *gin.Context) {
 	bookIdStr := c.Query("bookId")
 	bookId, err := strconv.Atoi(bookIdStr)
 	if err !=nil {
-		c.JSON(statusCode(fmt.Errorf(domain.BadRequest)), gin.H{
+		c.JSON(statusCode(fmt.Errorf(domain.InternalServerError)), gin.H{
 			"error": "Could not get book.",
 		})
 	}

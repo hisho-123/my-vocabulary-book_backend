@@ -15,7 +15,7 @@ func CreateBookByUserId(book domain.CreateBookInput) error {
 	const MAX_BOOK_NAME int = 20
 	if len(book.BookName) > MAX_BOOK_NAME {
 		log.Printf("error: Book name too long.")
-		return fmt.Errorf(domain.BadRequest)
+		return fmt.Errorf(domain.UnprocessableEntity)
 	}
 
 	db := db.OpenDB()
@@ -29,6 +29,8 @@ func CreateBookByUserId(book domain.CreateBookInput) error {
 		return fmt.Errorf(domain.InternalServerError)
 	}
 
+	// TODO: book_nameが重複したものが既にある場合、既存が取得されるため修正が必要
+	// 57行目でデータ削除してるから、事故る可能性あり笑
 	var bookId string
 	queryGetBookId := "select book_id from books where book_name = ?"
 	bookIdRow := db.QueryRow(queryGetBookId, book.BookName)
@@ -44,7 +46,7 @@ func CreateBookByUserId(book domain.CreateBookInput) error {
 			if mysqlErr, ok := err.(*mysql.MySQLError); ok {
 				if mysqlErr.Number == 1406 {
 					log.Println("error: ", err)
-					return fmt.Errorf(domain.BadRequest)
+					return fmt.Errorf(domain.UnprocessableEntity)
 				}
 
 				log.Println("error: ", err)
