@@ -226,7 +226,12 @@ nohup ./my-vocabulary-book/backend > /var/log/app/my-vocabulary-book.log 2>&1 &
 
 ### ホーム画面(/home)
 
-- なし
+#### 認証確認(GET /home)
+
+| status code | 内容                       |
+|-------------|----------------------------|
+| 401         | トークンなし/トークン無効  |
+| 500         | サーバーエラー             |
 
 ### 単語帳画面(/book)
 

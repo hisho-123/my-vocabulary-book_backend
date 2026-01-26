@@ -28,6 +28,8 @@ func NewRouter() *gin.Engine {
 		api.POST("/register", controller.RegisterHandler)
 		// ログイン
 		api.POST("/login", controller.LoginHandler)
+		// ホーム画面（認証確認）
+		api.GET("/home", controller.HomeHandler)
 		// ユーザー削除
 		api.DELETE("/user-delete", controller.DeleteUserHandler)
 		// 単語帳作成・取得

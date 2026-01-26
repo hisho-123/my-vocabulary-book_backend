@@ -66,3 +66,11 @@ func DeleteUser(requestHeader string) error {
 
 	return nil
 }
+
+func ValidateUserToken(requestHeader string) error {
+	_, err := domain.ValidateToken(requestHeader)
+	if err != nil {
+		return err
+	}
+	return nil
+}
