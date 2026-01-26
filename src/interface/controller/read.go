@@ -13,8 +13,8 @@ import (
 func GetBookListHandler(c *gin.Context) {
 	requestHeader := c.GetHeader("Token")
 	if requestHeader == "" {
-		c.JSON(http.StatusForbidden, gin.H{
-			"error": "Invalid Json header.",
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "Token is required.",
 		})
 		return
 	}
@@ -33,18 +33,19 @@ func GetBookListHandler(c *gin.Context) {
 func GetBookHandler(c *gin.Context) {
 	requestHeader := c.GetHeader("Token")
 	if requestHeader == "" {
-		c.JSON(http.StatusForbidden, gin.H{
-			"error": "Invalid Json header.",
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "Token is required.",
 		})
 		return
 	}
 
 	bookIdStr := c.Query("bookId")
 	bookId, err := strconv.Atoi(bookIdStr)
-	if err !=nil {
-		c.JSON(statusCode(fmt.Errorf(domain.InternalServerError)), gin.H{
-			"error": "Could not get book.",
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Invalid book ID format.",
 		})
+		return
 	}
 
 	book, err := usecase.GetBook(requestHeader, bookId)

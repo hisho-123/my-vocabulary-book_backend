@@ -59,7 +59,7 @@ func ValidateToken(requestToken string) (*Claims, error) {
 	})
 	if err != nil || !token.Valid {
 		log.Println("error: ", err)
-		return nil, fmt.Errorf(Forbidden)
+		return nil, fmt.Errorf(Unauthorized)
 	}
 
 	return claims, nil

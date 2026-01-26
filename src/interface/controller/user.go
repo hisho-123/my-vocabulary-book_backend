@@ -65,12 +65,12 @@ func LoginHandler(c *gin.Context) {
 func DeleteUserHandler(c *gin.Context) {
 	requestHeader := c.GetHeader("Token")
 	if requestHeader == "" {
-		c.JSON(http.StatusForbidden, gin.H{
-			"error": "Invalid Json header.",
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "Token is required.",
 		})
 		return
 	}
-	
+
 	if err := usecase.DeleteUser(requestHeader); err != nil {
 		c.JSON(statusCode(err), gin.H{
 			"error": "Could not delete user.",
