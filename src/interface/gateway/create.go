@@ -21,45 +21,50 @@ func CreateBookByUserId(book domain.CreateBookInput) error {
 	db := db.OpenDB()
 	defer db.Close()
 
-	queryCreateBook := "insert into books (user_id, book_name) values (?, ?);"
+	// トランザクション開始
+	tx, err := db.Begin()
+	if err != nil {
+		log.Println("error: ", err)
+		return fmt.Errorf(domain.InternalServerError)
+	}
+	defer tx.Rollback() // エラー時は自動ロールバック
 
-	_, err := db.Exec(queryCreateBook, strconv.Itoa(book.UserId), book.BookName)
+	queryCreateBook := "insert into books (user_id, book_name) values (?, ?);"
+	result, err := tx.Exec(queryCreateBook, strconv.Itoa(book.UserId), book.BookName)
 	if err != nil {
 		log.Println("error: ", err)
 		return fmt.Errorf(domain.InternalServerError)
 	}
 
-	// TODO: book_nameが重複したものが既にある場合、既存が取得されるため修正が必要
-	// 57行目でデータ削除してるから、事故る可能性あり笑
-	var bookId string
-	queryGetBookId := "select book_id from books where book_name = ?"
-	bookIdRow := db.QueryRow(queryGetBookId, book.BookName)
-	if err := bookIdRow.Scan(&bookId); err != nil {
+	// LastInsertId()で今挿入したbook_idを取得
+	bookId, err := result.LastInsertId()
+	if err != nil {
 		log.Println("error: ", err)
 		return fmt.Errorf(domain.InternalServerError)
 	}
 
+	// wordの挿入
 	queryCreateWord := "insert into words (book_id, word, translated_word) values (?, ?, ?)"
 	for _, v := range book.Words {
-		_, err := db.Query(queryCreateWord, bookId, v.Word, v.Translated)
+		_, err := tx.Exec(queryCreateWord, bookId, v.Word, v.Translated)
 		if err != nil {
 			if mysqlErr, ok := err.(*mysql.MySQLError); ok {
 				if mysqlErr.Number == 1406 {
 					log.Println("error: ", err)
 					return fmt.Errorf(domain.UnprocessableEntity)
 				}
-
-				log.Println("error: ", err)
-				return fmt.Errorf(domain.InternalServerError)
 			}
-
-			queryDeleteWords := "delete from words where book_id = ?;"
-			db.Query(queryDeleteWords, bookId)
-
 			log.Println("error: ", err)
 			return fmt.Errorf(domain.InternalServerError)
 		}
 	}
+
+	// コミット
+	if err := tx.Commit(); err != nil {
+		log.Println("error: ", err)
+		return fmt.Errorf(domain.InternalServerError)
+	}
+
 	return nil
 }
 
@@ -69,8 +74,9 @@ func CreateWordByBookId(bookId int, word string, translated string) error {
 	defer db.Close()
 
 	queryCreateWord := "insert into words (book_id, word, translated_word) values (?, ?, ?)"
-	_, err := db.Query(queryCreateWord, bookId, word, translated)
+	_, err := db.Exec(queryCreateWord, bookId, word, translated)
 	if err != nil {
+		log.Println("error: ", err)
 		return fmt.Errorf(domain.InternalServerError)
 	}
 	return nil
