@@ -82,7 +82,7 @@ func DeleteUserByUserId(userId int) error {
 	}
 	if rowsAffected == 0 {
 		log.Printf("no user found with user_id %d", userId)
-		return fmt.Errorf(domain.BadRequest)
+		return fmt.Errorf(domain.NotFound)
 	}
 
 	return nil

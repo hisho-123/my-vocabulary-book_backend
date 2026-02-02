@@ -2,6 +2,7 @@ package controller
 
 import (
 	"backend/src/domain"
+	"log"
 	"net/http"
 )
 
@@ -22,6 +23,7 @@ func statusCode(err error) int {
 	case domain.InternalServerError:
 		return http.StatusInternalServerError
 	default:
-		return http.StatusNotImplemented
+		log.Printf("Unknown error code: %s", err.Error())
+		return http.StatusInternalServerError
 	}
 }

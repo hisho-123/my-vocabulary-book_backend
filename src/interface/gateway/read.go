@@ -62,8 +62,8 @@ func GetBookByBookId(bookId int) (book *domain.GetBookOutput, err error) {
 	err = db.QueryRow(queryGetBook, bookId).Scan(&book.UserId, &book.BookName)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			log.Println("error: ", err)
-			return nil, fmt.Errorf(domain.InternalServerError)
+			log.Println("error: book not found with book_id:", bookId)
+			return nil, fmt.Errorf(domain.NotFound)
 		}
 		log.Println("error: ", err)
 		return nil, fmt.Errorf(domain.InternalServerError)

@@ -249,7 +249,8 @@ nohup ./my-vocabulary-book/backend > /var/log/app/my-vocabulary-book.log 2>&1 &
 | 400         | bookIdのフォーマットエラー             |
 | 401         | トークンなし/トークン無効              |
 | 403         | 他ユーザーの単語帳へのアクセス         |
-| 500         | データの取得失敗                       |
+| 404         | 単語帳が存在しない                     |
+| 500         | データベース接続エラー                 |
 
 
 ### 作成画面(/create)
@@ -270,6 +271,7 @@ nohup ./my-vocabulary-book/backend > /var/log/app/my-vocabulary-book.log 2>&1 &
 | status code | 内容                       |
 |-------------|---------------------------|
 | 401         | トークンなし/トークン無効  |
+| 404         | ユーザーが存在しない       |
 | 500         | サーバーエラー             |
 
 
@@ -280,4 +282,5 @@ nohup ./my-vocabulary-book/backend > /var/log/app/my-vocabulary-book.log 2>&1 &
 | 400         | 入力内容の不正                 |
 | 401         | トークンなし/トークン無効      |
 | 403         | 他ユーザーの単語帳への操作     |
+| 404         | 単語帳が存在しない             |
 | 500         | サーバーエラー                 |
