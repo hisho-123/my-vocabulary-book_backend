@@ -3,6 +3,7 @@ package usecase
 import (
 	"backend/src/domain"
 	"backend/src/interface/gateway"
+	"fmt"
 )
 
 func CreateUser(input domain.UserInput) (*domain.AuthOutput, error) {
@@ -31,6 +32,10 @@ func CreateUser(input domain.UserInput) (*domain.AuthOutput, error) {
 func LoginValidation(input domain.UserInput) (*domain.AuthOutput, error) {
 	userId, hashPassword, err := gateway.GetUser(input.UserName)
 	if err != nil {
+		// ユーザーが存在しない場合もパスワード不一致と同じ401を返す（セキュリティ対策）
+		if err.Error() == domain.NotFound {
+			return nil, fmt.Errorf(domain.Unauthorized)
+		}
 		return nil, err
 	}
 
@@ -59,5 +64,13 @@ func DeleteUser(requestHeader string) error {
 		return err
 	}
 
+	return nil
+}
+
+func ValidateUserToken(requestHeader string) error {
+	_, err := domain.ValidateToken(requestHeader)
+	if err != nil {
+		return err
+	}
 	return nil
 }

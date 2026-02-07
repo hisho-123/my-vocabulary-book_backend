@@ -12,7 +12,7 @@ func DeleteBookHandler(c *gin.Context) {
 	requestHeader := c.GetHeader("Token")
 	if requestHeader == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{
-			"error": "Invalid Json header.",
+			"error": "Token is required.",
 		})
 		return
 	}
@@ -31,6 +31,6 @@ func DeleteBookHandler(c *gin.Context) {
 		})
 		return
 	}
-	
+
 	c.JSON(http.StatusOK, nil)
 }

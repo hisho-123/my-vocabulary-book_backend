@@ -28,19 +28,20 @@ func CreateUser(user domain.UserInput) (userId int, err error) {
 
 	queryCreateUser := "insert into users (user_name, password) values (?, ?);"
 
-	_, err = db.Exec(queryCreateUser, user.UserName, user.Password)
+	result, err := db.Exec(queryCreateUser, user.UserName, user.Password)
 	if err != nil {
 		log.Println("error: ", err)
 		return 0, fmt.Errorf(domain.InternalServerError)
 	}
 
-	userId, _, err = GetUser(user.UserName)
+	// LastInsertId()で今挿入したuser_idを取得
+	lastInsertId, err := result.LastInsertId()
 	if err != nil {
 		log.Println("error: ", err)
 		return 0, fmt.Errorf(domain.InternalServerError)
 	}
 
-	return userId, nil
+	return int(lastInsertId), nil
 }
 
 // user取得
@@ -81,7 +82,7 @@ func DeleteUserByUserId(userId int) error {
 	}
 	if rowsAffected == 0 {
 		log.Printf("no user found with user_id %d", userId)
-		return fmt.Errorf(domain.BadRequest)
+		return fmt.Errorf(domain.NotFound)
 	}
 
 	return nil

@@ -12,7 +12,7 @@ func CreateHandler(c *gin.Context) {
 	requestHeader := c.GetHeader("Token")
 	if requestHeader == "" {
 		c.JSON(http.StatusUnauthorized, gin.H{
-			"error": "Invaild JSON header.",
+			"error": "Token is required.",
 		})
 		return
 	}
@@ -23,6 +23,29 @@ func CreateHandler(c *gin.Context) {
 			"error": "Invalid JSON body.",
 		})
 		return
+	}
+
+	if requestBody.BookName == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Book name is required.",
+		})
+		return
+	}
+
+	if len(requestBody.Words) == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "At least one word is required.",
+		})
+		return
+	}
+
+	for _, word := range requestBody.Words {
+		if word.Word == "" || word.Translated == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "Word and translation cannot be empty.",
+			})
+			return
+		}
 	}
 
 	if err := usecase.CreateBook(requestHeader, requestBody); err != nil {
