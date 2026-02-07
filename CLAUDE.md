@@ -6,6 +6,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 単語帳アプリケーションのバックエンドAPI。Goで構築され、アプリの規模に適した簡略化されたクリーンアーキテクチャパターンを採用。
 
+## ファイル構造
+
+- リポジトリルート: 開発ツール（docker-compose.yml等）を配置
+- src/: アプリケーションコード（Goソース、インフラ実装）を配置
+
 ## 技術スタック
 
 - 言語: Go 1.23.3
@@ -28,9 +33,8 @@ go run main.go
 ### データベースセットアップ
 
 ```bash
-# MySQLコンテナを起動
-cd src/infra/db
-docker compose up
+# MySQLコンテナを起動（リポジトリルートから実行）
+docker compose up -d
 
 # データベースに直接アクセス
 docker exec -it db bash
