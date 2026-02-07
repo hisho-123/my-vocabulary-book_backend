@@ -6,7 +6,7 @@ import (
 )
 
 func OpenDB() *sql.DB {
-	db, err := sql.Open("mysql", "root:root@tcp(127.17.0.1:3306)/my_vocabulary_book")
+	db, err := sql.Open("mysql", "root:root@tcp(127.0.0.1:3306)/my_vocabulary_book")
 	if err != nil {
 		log.Println("error: ", err)
 	}
