@@ -5,8 +5,8 @@ services:
     image: mysql
     container_name: db
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE:  my_vocabulary_book
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
       TZ: "Asia/Tokyo"
     volumes:
       - ./src/infra/db/migrations:/docker-entrypoint-initdb.d
