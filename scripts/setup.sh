@@ -4,6 +4,16 @@ set -e
 # バイナリに実行権限を付与
 chmod +x /opt/my-vocabulary-book/my-vocabulary-book_backend
 
+# env ディレクトリを確保し、SSM Parameter Store から env ファイルを取得
+mkdir -p /etc/my-vocabulary-book
+aws ssm get-parameter \
+  --name "/mvb/backend/env" \
+  --with-decryption \
+  --query Parameter.Value \
+  --output text \
+  --region ap-northeast-1 \
+  > /etc/my-vocabulary-book/env
+
 # systemd unit ファイルを配置 (初回のみ)
 if [ ! -f /etc/systemd/system/my-vocabulary-book.service ]; then
     cat > /etc/systemd/system/my-vocabulary-book.service <<'EOF'
