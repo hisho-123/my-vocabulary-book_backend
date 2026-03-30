@@ -40,6 +40,7 @@ mkdir -p /var/log/app
 touch /var/log/app/my-vocabulary-book.log
 
 # DB マイグレーション
+yum install -y mysql -q
 set -a
 source /etc/my-vocabulary-book/env
 set +a
