@@ -2,11 +2,20 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
+	"os"
 )
 
 func OpenDB() *sql.DB {
-	db, err := sql.Open("mysql", "root:root@tcp(127.0.0.1:3306)/my_vocabulary_book")
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_PORT"),
+		os.Getenv("DB_NAME"),
+	)
+	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		log.Println("error: ", err)
 	}

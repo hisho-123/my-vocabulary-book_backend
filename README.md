@@ -137,17 +137,52 @@ erDiagram
 
 ### 接続方法
 
-- ディレクトリ移動: cd src/infra/db/
-- dockerのビルド: docker compose up
-- docker内に入る: docker exec -it db bash
-  - mysql内に入る : mysql -u root -p
-    - password                     : root
-    - DBの確認                      : show databases;
-    - my-vocabulary-book へアクセス : use my-vocabulary-book;
-      - tableの確認                 : show tables;
-  - mysql外に出る : exit
+#### 環境変数のセットアップ
 
-- dockerに入ると同時にmysqlへ : docker exec -it db mysql -uroot -proot
+```bash
+# .env.example をコピーして .env を作成
+cp .env.example .env
+
+# .env を編集して実際の値を設定
+# JWT_KEY には任意の秘密鍵文字列を設定
+```
+
+#### Docker (MySQL) の起動
+
+```bash
+# リポジトリルートから実行（.env が自動読み込みされる）
+docker compose up -d
+```
+
+#### Go アプリの起動
+
+```bash
+# 環境変数をシェルにエクスポート
+export $(cat .env | xargs)
+
+# アプリ起動
+cd src && go run main.go
+```
+
+direnv を使う場合は `.envrc` に `dotenv` と記載することで自動読み込みできます。
+
+#### MySQL への接続確認
+
+```bash
+# docker内に入る
+docker exec -it db bash
+  # mysql内に入る
+  mysql -u root -p
+    # DBの確認
+    show databases;
+    # my_vocabulary_book へアクセス
+    use my_vocabulary_book;
+    # tableの確認
+    show tables;
+
+# dockerに入ると同時にmysqlへ
+docker exec -it db mysql -uroot -p$(grep MYSQL_ROOT_PASSWORD .env | cut -d= -f2)
+```
 
 ## deploy
 
