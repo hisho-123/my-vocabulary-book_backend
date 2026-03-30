@@ -10,7 +10,7 @@ fi
 # ヘルスチェックエンドポイントへの疎通確認 (最大30秒待機)
 for i in $(seq 1 6); do
     STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-        --max-time 5 http://localhost:8080/api/auth/check 2>/dev/null)
+        --max-time 5 http://localhost:80/api/home 2>/dev/null)
     if [ -n "$STATUS" ] && [ "$STATUS" != "000" ]; then
         echo "Health check passed (HTTP $STATUS)"
         exit 0

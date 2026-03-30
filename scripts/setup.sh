@@ -39,4 +39,10 @@ fi
 mkdir -p /var/log/app
 touch /var/log/app/my-vocabulary-book.log
 
+# DB マイグレーション
+set -a
+source /etc/my-vocabulary-book/env
+set +a
+mysql -h "$DB_HOST" -P "$DB_PORT" -u "$DB_USER" -p"$DB_PASSWORD" < /opt/my-vocabulary-book/schema.sql
+
 exit 0
