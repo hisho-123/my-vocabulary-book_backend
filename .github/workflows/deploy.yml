@@ -31,6 +31,7 @@ jobs:
           cp src/my-vocabulary-book_backend deploy/
           cp appspec.yml deploy/
           cp -r scripts/ deploy/
+          cp src/infra/db/migrations/schema.sql deploy/
           cd deploy && zip -r ../deployment.zip .
 
       - uses: aws-actions/configure-aws-credentials@v4
